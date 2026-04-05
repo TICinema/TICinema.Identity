@@ -7,7 +7,7 @@ using TICinema.Identity.Application.Interfaces.Repositories;
 using TICinema.Identity.Domain.Entities;
 using TICinema.Identity.Infrastructure.Persistence;
 
-namespace TICinema.Identity.Infrastructure.Repositories.Authentication
+namespace TICinema.Identity.Infrastructure.Repositories
 {
     public class AuthRepository(ApplicationDbContext dbContext) : IAuthRepository
     {

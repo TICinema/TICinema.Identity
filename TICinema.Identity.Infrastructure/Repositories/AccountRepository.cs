@@ -3,7 +3,7 @@ using TICinema.Identity.Application.Interfaces.Repositories;
 using TICinema.Identity.Domain.Entities;
 using TICinema.Identity.Infrastructure.Persistence;
 
-namespace TICinema.Identity.Infrastructure.Repositories.Account;
+namespace TICinema.Identity.Infrastructure.Repositories;
 
 public class AccountRepository(ApplicationDbContext dbContext) : IAccountRepository
 {

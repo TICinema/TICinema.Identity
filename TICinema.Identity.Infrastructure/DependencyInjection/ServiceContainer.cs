@@ -2,14 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using TICinema.Identity.Application.Interfaces;
 using TICinema.Identity.Application.Interfaces.Repositories;
 using TICinema.Identity.Application.Interfaces.Services;
 using TICinema.Identity.Domain.Entities;
 using TICinema.Identity.Infrastructure.Configurations;
 using TICinema.Identity.Infrastructure.Persistence;
-using TICinema.Identity.Infrastructure.Repositories.Account;
-using TICinema.Identity.Infrastructure.Repositories.Authentication;
+using TICinema.Identity.Infrastructure.Repositories;
 using TICinema.Identity.Infrastructure.Services;
 
 namespace TICinema.Identity.Infrastructure.DependencyInjection
@@ -30,6 +28,8 @@ namespace TICinema.Identity.Infrastructure.DependencyInjection
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<ICacheService, RedisCacheService>();
             services.AddScoped<IAccountRepository, AccountRepository>();
+            services.AddScoped<ITelegramService, TelegramService>();
+            services.AddScoped<ITelegramRepository, TelegramRepository>();
             
             services.AddStackExchangeRedisCache(options =>
             {
@@ -38,6 +38,7 @@ namespace TICinema.Identity.Infrastructure.DependencyInjection
             });
 
             services.Configure<JwtSettings>(config.GetSection(JwtSettings.SectionName));
+            services.Configure<TelegramSettings>(config.GetSection(TelegramSettings.SectionName));
             services.AddScoped<IJwtService, JwtService>();
 
             return services;
