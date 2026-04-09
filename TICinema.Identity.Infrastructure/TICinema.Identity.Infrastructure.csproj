@@ -14,7 +14,7 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.5" />
 		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.5" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
-		<PackageReference Include="TICinema.Contracts" Version="1.0.12" />
+		<PackageReference Include="TICinema.Contracts" Version="1.0.15" />
 	</ItemGroup>
 
 

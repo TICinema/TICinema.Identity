@@ -82,7 +82,8 @@ public class AccountService(
             throw new RpcException(new Status(StatusCode.InvalidArgument, ex.Message));
         }
     }
-    
+
+
     private static Role ToGrpcRole(IEnumerable<string> roles)
     {
         if (roles.Contains("Admin")) return Role.Admin;

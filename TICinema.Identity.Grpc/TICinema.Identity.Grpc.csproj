@@ -8,6 +8,8 @@
 
     <ItemGroup>
         <PackageReference Include="Grpc.AspNetCore" Version="2.76.0" />
+        <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.80.0-pre1" />
+        <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.8" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.5" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5">
@@ -16,8 +18,10 @@
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.5" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
+        <PackageReference Include="prometheus-net.AspNetCore" Version="8.2.1" />
+        <PackageReference Include="prometheus-net.AspNetCore.Grpc" Version="8.2.1" />
         <PackageReference Include="Scalar.AspNetCore" Version="2.13.19" />
-        <PackageReference Include="TICinema.Contracts" Version="1.0.12" />
+        <PackageReference Include="TICinema.Contracts" Version="1.0.15" />
     </ItemGroup>
 
     <ItemGroup>

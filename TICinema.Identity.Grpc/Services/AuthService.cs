@@ -132,4 +132,6 @@ public class AuthService(ILogger<AuthService> logger, IAuthService authService, 
             throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
         }
     }
+
+    
 }

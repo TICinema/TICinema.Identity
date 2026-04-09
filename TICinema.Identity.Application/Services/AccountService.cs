@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using MassTransit;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
+using TICinema.Contracts.Events;
 using TICinema.Identity.Application.Interfaces;
 using TICinema.Identity.Application.Interfaces.Repositories;
 using TICinema.Identity.Application.Interfaces.Services;
@@ -6,7 +9,8 @@ using TICinema.Identity.Domain.Entities;
 
 namespace TICinema.Identity.Application.Services;
 
-public class AccountService(UserManager<ApplicationUser> userManager, IOtpService otpService, IAccountRepository accountRepository) : IAccountService
+public class AccountService(UserManager<ApplicationUser> userManager, IOtpService otpService, IAccountRepository accountRepository, IPublishEndpoint publishEndpoint, // <-- Добавили шину
+    ILogger<AccountService> logger) : IAccountService
 {
     // --- EMAIL ---
     public async Task<bool> InitEmailChangeAsync(string userId, string newEmail)
@@ -15,20 +19,31 @@ public class AccountService(UserManager<ApplicationUser> userManager, IOtpServic
         if (existingUser != null)
             throw new Exception("Email уже используется другим аккаунтом.");
 
+        // 1. Генерируем код (пусть SendAsync теперь только генерирует и возвращает код/хэш)
         var (code, hash) = await otpService.SendAsync(newEmail, "email");
 
+        // 2. Сохраняем в БД временные данные
         var pendingChange = new PendingContactChange
         {
             UserId = userId,
-            Type = "email", // <-- Маленькими буквами для консистентности
+            Type = "email",
             Value = newEmail,
             CodeHash = hash,
             ExpiresAt = DateTime.UtcNow.AddMinutes(5),
             UpdatedAt = DateTime.UtcNow
         };
-
         await accountRepository.UpsertPendingContactChange(pendingChange);
-        Console.WriteLine($"[DEBUG] Email OTP for {newEmail}: {code}");
+
+        // 3. ПУБЛИКУЕМ СОБЫТИЕ В RABBITMQ
+        await publishEndpoint.Publish(new EmailChangedEvent
+        {
+            NewEmail = newEmail,
+            Code = code
+        });
+        
+        logger.LogInformation("СОБЫТИЕ ОПУБЛИКОВАНО!");
+
+        logger.LogInformation("Запрос на смену Email опубликован для {Email}", newEmail);
         return true;
     }
 

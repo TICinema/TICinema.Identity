@@ -8,6 +8,7 @@ using System.Web;
 using Microsoft.AspNetCore.Identity;
 using TICinema.Contracts.Protos.Identity;
 using TICinema.Identity.Application.DTOs.Inputs;
+using TICinema.Identity.Application.Interfaces.Clients;
 using TICinema.Identity.Application.Interfaces.Repositories;
 using TICinema.Identity.Application.Interfaces.Services;
 using TICinema.Identity.Domain.Entities;
@@ -21,7 +22,8 @@ namespace TICinema.Identity.Infrastructure.Services
         ICacheService cacheService,
         IJwtService jwtService, // Для генерации реальных токенов
         UserManager<ApplicationUser> userManager,
-        IAuthRepository authRepository) : ITelegramService
+        IAuthRepository authRepository,
+        IUsersGrpcClient usersGrpcClient) : ITelegramService
     {
         private readonly TelegramSettings _tgSettings = tgOptions.Value;
 
@@ -55,6 +57,15 @@ namespace TICinema.Identity.Infrastructure.Services
             // 3. Если пользователь есть и у него есть телефон — логиним
             if (existsUser != null && existsUser.PhoneNumber != null)
             {
+                try
+                {
+                    await usersGrpcClient.CreateUserAsync(existsUser.Id);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("The user is not created.", ex);
+                }
+                
                 var roles = await userManager.GetRolesAsync(existsUser);
                 var (access, refresh) = jwtService.GenerateTokens(existsUser.Id, roles);
 
