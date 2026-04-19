@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TICinema.Identity.Application.Configurations;
 using TICinema.Identity.Application.Interfaces.Repositories;
 using TICinema.Identity.Application.Interfaces.Services;
 using TICinema.Identity.Domain.Entities;

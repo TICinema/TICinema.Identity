@@ -1,4 +1,7 @@
 using MassTransit;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Prometheus;
 using Scalar.AspNetCore;
 using TICinema.Contracts.Protos.Users;
@@ -12,21 +15,26 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.WebHost.ConfigureKestrel(options =>
 {
-    // Слушаем HTTP на 5000 (для метрик и Scalar)
-    options.ListenAnyIP(5000); 
-    // Слушаем HTTP/2 на 5001 (для gRPC) БЕЗ SSL
-    options.ListenAnyIP(5001, listenOptions =>
+    options.ListenAnyIP(5101, o =>
     {
-        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
+        o.Protocols = HttpProtocols.Http2;
     });
 });
+
+builder.Services.AddOpenTelemetry()
+    .WithTracing(tracing => tracing
+        .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("Identity-Service"))
+        .AddAspNetCoreInstrumentation()
+        .AddGrpcClientInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddRedisInstrumentation()
+        .AddOtlpExporter(options => options.Endpoint = new Uri("http://jaeger:4317")));
 
 builder.Services.AddGrpc(options =>
 {
     options.Interceptors.Add<ExceptionInterceptor>();
 });
 
-builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
@@ -70,7 +78,5 @@ app.MapGrpcService<AuthService>();
 app.MapGrpcService<AccountService>();
 
 app.MapMetrics();
-
-app.MapControllers();
 
 app.Run();

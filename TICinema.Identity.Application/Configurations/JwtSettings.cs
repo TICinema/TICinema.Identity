@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TICinema.Identity.Infrastructure.Configurations
+﻿namespace TICinema.Identity.Application.Configurations
 {
     public class JwtSettings
     {
